@@ -45,6 +45,7 @@ router.use((req, res, next) => {
     next();
 });
 
+// Parse the Body 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
@@ -66,3 +67,10 @@ router.use((req, res, next) => {
 const httpServer = http.createServer(router);
 
 httpServer.listen(config.server.port, () => logging.info(NAMESPACE, `Server is running ${config.server.hostname}:${config.server.port}`));
+
+
+
+
+// 1. Added Proper Documentation for each API 
+// 2. Proper Logging for every API 
+// 3. ClassRoom Auth 
