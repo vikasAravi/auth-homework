@@ -11,6 +11,7 @@ const sample_1 = __importDefault(require("./routes/sample"));
 const user_1 = __importDefault(require("./routes/user"));
 const classroom_1 = __importDefault(require("./routes/classroom"));
 const school_1 = __importDefault(require("./routes/school"));
+const roles_1 = __importDefault(require("./routes/roles"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const express_2 = __importDefault(require("express"));
 const NAMESPACE = 'SERVER';
@@ -41,6 +42,7 @@ router.use((req, res, next) => {
     }
     next();
 });
+// Parse the Body
 router.use(express_2.default.urlencoded({ extended: true }));
 router.use(express_2.default.json());
 /** Routes go here */
@@ -48,6 +50,7 @@ router.use('/sample', sample_1.default);
 router.use('/api/v0/user', user_1.default);
 router.use('/api/v0/classroom', classroom_1.default);
 router.use('/api/v0/school', school_1.default);
+router.use('/api/v0/roles', roles_1.default);
 /** Error handling */
 router.use((req, res, next) => {
     const error = new Error('Not found');
@@ -57,3 +60,6 @@ router.use((req, res, next) => {
 });
 const httpServer = http_1.default.createServer(router);
 httpServer.listen(config_1.default.server.port, () => logging_1.default.info(NAMESPACE, `Server is running ${config_1.default.server.hostname}:${config_1.default.server.port}`));
+// 1. Added Proper Documentation for each API
+// 2. Proper Logging for every API
+// 3. ClassRoom Auth

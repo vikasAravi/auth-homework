@@ -1,11 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import logging from '../config/logging';
 import ClassRoom from '../models/classroom';
+import Auth from "../middleware/roleBasedAuth";
 
 const NAMESPACE = 'ClassRooom Controller';
+const RESOURCE = "CLASSROOM";
 
-const getClassRoom = (req: Request, res: Response, next: NextFunction) => {
+const getClassRoom = async (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, `METHOD - [${req.method}], URL - [${req.url}]`);
+
+    await Auth.auth(req, res, next, RESOURCE);
+
     let _id = req.query._id;
     return ClassRoom.find({
         _id: _id,
@@ -26,8 +31,10 @@ const getClassRoom = (req: Request, res: Response, next: NextFunction) => {
         });
 };
 
-const createClassRoom = (req: Request, res: Response, next: NextFunction) => {
+const createClassRoom = async (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, `METHOD - [${req.method}], URL - [${req.url}]`);
+
+    await Auth.auth(req, res, next, RESOURCE);
 
     let { _id, school_id, class_name, created_user } = req.body;
 
@@ -55,8 +62,10 @@ const createClassRoom = (req: Request, res: Response, next: NextFunction) => {
         });
 };
 
-const updateClassRoom = (req: Request, res: Response, next: NextFunction) => {
+const updateClassRoom = async (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, `METHOD - [${req.method}], URL - [${req.url}]`);
+
+    await Auth.auth(req, res, next, RESOURCE);
 
     let id = req.query._id;
 
@@ -89,8 +98,10 @@ const updateClassRoom = (req: Request, res: Response, next: NextFunction) => {
         });
 };
 
-const deleteClassRoom = (req: Request, res: Response, next: NextFunction) => {
+const deleteClassRoom = async (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, `METHOD - [${req.method}], URL - [${req.url}]`);
+
+    await Auth.auth(req, res, next, RESOURCE);
 
     let _id = req.query._id;
 

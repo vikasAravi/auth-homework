@@ -1,11 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import logging from '../config/logging';
 import School from '../models/school';
+import Auth from "../middleware/roleBasedAuth";
 
 const NAMESPACE = 'School Controller';
+const RESOURCE = 'SCHOOL'; 
 
-const getSchool = (req: Request, res: Response, next: NextFunction) => {
+const getSchool = async (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, `METHOD - [${req.method}], URL - [${req.url}]`);
+    
+    await Auth.auth(req, res, next, RESOURCE); // middle ware
 
     let _id = req.query._id;
     return School.findById({
@@ -26,8 +30,10 @@ const getSchool = (req: Request, res: Response, next: NextFunction) => {
         });
 };
 
-const createSchool = (req: Request, res: Response, next: NextFunction) => {
+const createSchool = async (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, `METHOD - [${req.method}], URL - [${req.url}]`);
+
+    await Auth.auth(req, res, next, RESOURCE);
 
     let { _id, school_name, created_user } = req.body;
 
@@ -53,8 +59,10 @@ const createSchool = (req: Request, res: Response, next: NextFunction) => {
         });
 };
 
-const updateSchool = (req: Request, res: Response, next: NextFunction) => {
+const updateSchool = async (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, `METHOD - [${req.method}], URL - [${req.url}]`);
+
+    await Auth.auth(req, res, next, RESOURCE) 
 
     let id = req.query._id;
 
@@ -86,8 +94,10 @@ const updateSchool = (req: Request, res: Response, next: NextFunction) => {
         });
 };
 
-const deleteSchool = (req: Request, res: Response, next: NextFunction) => {
+const deleteSchool = async (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, `METHOD - [${req.method}], URL - [${req.url}]`);
+
+    await Auth.auth(req, res, next, RESOURCE)
 
     let _id = req.query._id;
 

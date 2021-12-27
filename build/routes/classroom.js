@@ -5,8 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const classroom_1 = __importDefault(require("../controllers/classroom"));
+const roleBasedAuth_1 = __importDefault(require("../middleware/roleBasedAuth"));
 const router = express_1.default.Router();
-router.get('/get', classroom_1.default.getClassRoom);
+router.get('/get', roleBasedAuth_1.default.schoolAuth && roleBasedAuth_1.default.schoolAuth, classroom_1.default.getClassRoom);
 router.post('/create', classroom_1.default.createClassRoom);
 router.put('/update', classroom_1.default.updateClassRoom);
 router.delete('/delete', classroom_1.default.deleteClassRoom);

@@ -1,50 +1,60 @@
-import mongoose from "mongoose"; 
-import { Request, Response, NextFunction} from "express-serve-static-core";
-import logging from "../config/logging"; 
-import User from "../models/user"; 
-import ClassRoom from "../models/classroom"; 
+import mongoose from 'mongoose';
+import { Request, Response, NextFunction } from 'express-serve-static-core';
+import logging from '../config/logging';
+import User from '../models/user';
+import ClassRoom from '../models/classroom';
+import Roles from "../models/roles"; 
 
-//Available Roles 
+//Available Roles
 const ROLES = {
-    "PRINCIPAL": "PRINCIPAL", 
-    "TEACHER": "TEACHER",
-    "STUDENT": "STUDENT"
-}
+    PRINCIPAL: 'PRINCIPAL',
+    TEACHER: 'TEACHER',
+    STUDENT: 'STUDENT'
+};
 
-const NAMESPACE = "Auth MiddleWare"; 
+const NAMESPACE = 'Auth MiddleWare';
+
+//SCHOOL ENTITY AUTHENTICATION
 
 
-//SCHOOL ENTITY AUTHENTICATION 
-const schoolAuth = async (req: Request, res: Response, next: NextFunction) => {
-    if(!req.query.user_id)
-        return res.status(401).json({
-            "message": "No Permission to use this resource"
+const auth = async (req: Request, res: Response, next: NextFunction, resource: string) => {
+    let requested_user_id = req.query.user_id; 
+    let method = req.method; 
+    return await User.findById(requested_user_id)
+    .exec()
+    .then((response) => {
+        logging.info(NAMESPACE, " ", response); 
+        let role = response?.get('user_role'); 
+        let user_id = response?.get('_id');
+        let permission =  Roles.find({role: role, resource: resource, method: method})
+        .exec()
+        .then((response) => {
+            logging.info(NAMESPACE, " ", response);
+            if(!response[0].get('access')){
+                return res.status(401).json({
+                    message: "Access Denied"
+                });
+            }
+            else if(role == 'TEACHER' || role == 'STUDENT'){
+                if(requested_user_id != user_id){
+                    return res.status(401).json({
+                        message: "Access Denied"
+                    });
+                }
+            }
+        })
+        .catch(error => {
+            return error; 
         });
-    await User.findById(req.query.user_id).
-                    exec()
-                    .then(response => {
-                        logging.info(NAMESPACE, " ", response); 
-                        if(response?.get('user_role') != ROLES.PRINCIPAL){
-                            return res.status(401).json({
-                                "message": "No Permission to use this resource"
-                            });
-                        }
-                    })
-    next(); 
-    
+
+    }).catch(error => {
+        return error; 
+    })
+
+    next();
 }
-
-
-// CLASSROOM ENTITY AUTHENTICATION 
-/**
- * Conditions : Any one of them is good 
- * 1. next() - If user has pricipal role
- * 2. next() - If user has teacher role then created user id and requested user id should match 
- * Otherwise access denied 
- */
-
 
 
 export default {
-    schoolAuth
-}
+    auth
+};

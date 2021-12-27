@@ -6,6 +6,7 @@ import sampleRoutes from './routes/sample';
 import userRoutes from './routes/user';
 import classroomRoutes from './routes/classroom';
 import schoolRoutes from './routes/school';
+import userRoles from './routes/roles';
 import mongoose from 'mongoose';
 import bodyParser from 'express';
 
@@ -45,7 +46,7 @@ router.use((req, res, next) => {
     next();
 });
 
-// Parse the Body 
+// Parse the Body
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
@@ -54,6 +55,7 @@ router.use('/sample', sampleRoutes);
 router.use('/api/v0/user', userRoutes);
 router.use('/api/v0/classroom', classroomRoutes);
 router.use('/api/v0/school', schoolRoutes);
+router.use('/api/v0/roles', userRoles);
 
 /** Error handling */
 router.use((req, res, next) => {
@@ -68,9 +70,6 @@ const httpServer = http.createServer(router);
 
 httpServer.listen(config.server.port, () => logging.info(NAMESPACE, `Server is running ${config.server.hostname}:${config.server.port}`));
 
-
-
-
-// 1. Added Proper Documentation for each API 
-// 2. Proper Logging for every API 
-// 3. ClassRoom Auth 
+// 1. Added Proper Documentation for each API
+// 2. Proper Logging for every API
+// 3. ClassRoom Auth
